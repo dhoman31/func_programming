@@ -1,57 +1,65 @@
 ## Daniel Homan
-## Student Number: ########
+## 15515323
 
 ## PART ONE
 
-# A)
+kons = lambda a d z . z false a d
+kar = lambda p . p (lambda n a d . a)
+kdr = lambda p . p (lambda n a d . d)
+null = lambda z . z true false false
+null? = lambda p . p (lambda n a d . n)
+true = lambda a b . a
+false = lambda a b . b
 
-i)
-	kons = λ a d z . z false a d
-	     = λ a d z . (((z false) a))d
-	     = (λ a (λ b (λ z ((z false) a) d)))
-	     = (λ a . (λ b . (a false) d))
-	     = (λ a . (a false))
-	     = false
 
-ii)	kar = λ p . p (λ n a d . a)
-	    = λ p . p (true)
-	    = λ p . p true
+i)	kar (kons e1 e2) ↝ e1
+		 - start with taking kons first
+		 kons = (λ a d z . z false a d) e1 e2
+		 			= (λ d z . z false e1 d) e2
+					= (λ z . z false e1 e2)
 
-iii)	kdr = λ p . p (λ n a d . d)
-	    = λ p . p (false)
-	    = λ p . p false
+		- substitute into kar
+		kar = (λ p . p (λ n a d . a)) (λ z . z false e1 e2)
+				= (λ z . z false e1 e2) (λ n a d . a)
+				= (λ a d . a) e1 e2
+				= (λ d . e1) e2
+		- since a := e1 and a is returned, our solution is e1
 
-iv)	null = λ z . z true false false
-	     = λ z . ( (z true) false) false)
-	     = λ z . z
-	     = λ z . true
-	     = true
+ii)	kdr (kons e1 e2) ↝ e2
+		- start with (kons e1 e2) first -> using above kons
+		kons e1 e2 = (λ z . z false e1 e2)
 
-v)	null? = λ p . p (λ n a d . n)
-	      = λ p . p (true)
-	      = λ p . p true
+		- substitute into kdr
+		kdr(λ z . z false e1 e2) =>
+				= (λ p . p (λ n a d . d)) (λ z . z false e1 e2)
+				= (λ z . z false e1 e2) (λ n a d . d)
+				= (λ n a d . d) false e1 e2
+				= (λ a d . d) e1 e2
+				- can't substitute e1 for a
+				= (λ d . d) e2
+				= (λ d . d)
+				= e2
 
-vi)	true = λ a b . a
-	       = λ a . a
-     	   = true
-
-vii) 	false = λ a b . b
-	      = λ a . 0
-	      = false
-
-# B)
-
-i) 	kar (kons e1 e2) ↝ e1
-		???
-
-ii) 	kdr (kons e1 e2) ↝ e2
-		???
 
 iii)	null? (kons e1 e2) ↝  false
-		???
+			- start with (kons e1 e2) first -> using about kons
+			kons e1 e2 = (λ z . z false e1 e2)
+
+			- substitute into null?
+			null?(λ z . z false e1 e2) =>
+				= (λ p . p (λ n a d . n)) (λ z . z false e1 e2)
+				= (λ z . z false e1 e2) (λ n a d . n)
+				= (λ n a d . n) false e1 e2
+				- n := false and false is returned this false is the output
+				=> (λ false a d . false) e1 e2 => false
+
 
 iv)	null? null ↝ true
-		???
+			=> (λ p . p (λ n a d . n)) (λ z . z true false false)
+			= (λ z . z true false false)(λ n a d . n)
+			=	(λ n a d . n) (true false false)
+			- since n := true and n is returned the output is true
+			=> (λ true a d . true) false false = true
 
 ## PART TWO
 
@@ -59,18 +67,18 @@ iv)	null? null ↝ true
 
 # cleaner representation
 
-	(λ c . 
-	(λ a . 
-	(λ d . 
-	(λ h . 
-	(h (d (a (a (λ z y . y))) 
-	(d (a (a (λ f x . x))) 
-	(a (a (a (λ z x . x)))))) 
-	(h (a (a (λ z y . y))) 
-	(a (a (a (λ z x . x))))))) 
-	(λ n m . n (d m) (λ z y . y))) 
-	(λ n m . n a m)) 
-	(λ n z . c (n z) z)) 
+	(λ c .
+	(λ a .
+	(λ d .
+	(λ h .
+	(h (d (a (a (λ z y . y)))
+	(d (a (a (λ f x . x)))
+	(a (a (a (λ z x . x))))))
+	(h (a (a (λ z y . y)))
+	(a (a (a (λ z x . x)))))))
+	(λ n m . n (d m) (λ z y . y)))
+	(λ n m . n a m))
+	(λ n z . c (n z) z))
 	(λ z g x . z (g x))
 
 Solutions
@@ -80,83 +88,83 @@ Solutions
 	(λ z g x . z (g x)) = (λ z g. z)
 
 Using above reduces to
-	(λ c . 
-	(λ a . 
-	(λ d . 
-	(λ h . 
-	(h (d (a (a (λ z y . y))) 
-	(d (a (a (λ f x . x))) 
-	(a (a (a (λ z x . x)))))) 
-	(h (a (a (λ z y . y))) 
-	(a (a (a (λ z x . x))))))) 
-	(λ z y . y)) 
+	(λ c .
+	(λ a .
+	(λ d .
+	(λ h .
+	(h (d (a (a (λ z y . y)))
+	(d (a (a (λ f x . x)))
+	(a (a (a (λ z x . x))))))
+	(h (a (a (λ z y . y)))
+	(a (a (a (λ z x . x)))))))
+	(λ z y . y))
 	 a)
 	 c)
 	(λ z g. z)
 
 C is an unbound variable so it can be reduced to:
-	(λ a . 
-	(λ d . 
-	(λ h . 
-	(h (d (a (a (λ z y . y))) 
-	(d (a (a (λ f x . x))) 
-	(a (a (a (λ z x . x)))))) 
-	(h (a (a (λ z y . y))) 
-	(a (a (a (λ z x . x))))))) 
-	(λ z y . y)) 
+	(λ a .
+	(λ d .
+	(λ h .
+	(h (d (a (a (λ z y . y)))
+	(d (a (a (λ f x . x)))
+	(a (a (a (λ z x . x))))))
+	(h (a (a (λ z y . y)))
+	(a (a (a (λ z x . x)))))))
+	(λ z y . y))
 	 a)
 	(λ z g. z)
 
 
 Reduce d to (λ z y . y)
-	(λ h . 
-	(h (λ z y . y (a (a (λ z y . y))) 
-	(λ z y . y(a (a (λ f x . x))) 
-	(a (a (a (λ z x . x)))))) 
-	(h (a (a (λ z y . y))) 
-	(a (a (a (λ z x . x)))))))  
+	(λ h .
+	(h (λ z y . y (a (a (λ z y . y)))
+	(λ z y . y(a (a (λ f x . x)))
+	(a (a (a (λ z x . x))))))
+	(h (a (a (λ z y . y)))
+	(a (a (a (λ z x . x)))))))
 	(λ z g. z)
 
 
-Alpha renaming 
-	(λ h . 
-	(h (λ z y . y (a (a (λ z y . y))) 
-	((λ z y . y (a (a (λ f x . x))) 
-	((λ z x . x))(a (a(λ f x . x)))) 
-	(a (a (a (λ z y . y))) 
+Alpha renaming
+	(λ h .
+	(h (λ z y . y (a (a (λ z y . y)))
+	((λ z y . y (a (a (λ f x . x)))
+	((λ z x . x))(a (a(λ f x . x))))
+	(a (a (a (λ z y . y)))
 	(h (a (a (λ z x . x))))))
 	(a(a(a(λ zj. j)))))))
 	(λ kg.k)
 
 Beta Reduce h to λ k g.k
-	(λ k g.k (λ z y . y (a (a (λ z y . y))) 
-	((λ z y . y (a (a (λ f x . x))) 
-	(a (a (a (λ z y . y))) 
+	(λ k g.k (λ z y . y (a (a (λ z y . y)))
+	((λ z y . y (a (a (λ f x . x)))
+	(a (a (a (λ z y . y)))
 	(λ kg.k (a (a (λ z x . x))))))
 	(a(a(a(λ zj. j)))))))
 
 Alpha Renaming
-	(λ k g.k (λ z y . y (a (a (λ z y . y))) 
-	((λ z y . y (a (a (λ f x . x))) 
-	(a (a (a (λ z y . y))) 
+	(λ k g.k (λ z y . y (a (a (λ z y . y)))
+	((λ z y . y (a (a (λ f x . x)))
+	(a (a (a (λ z y . y)))
 	(λ z x . z(a(a(λzj.j)))))
 	(a(a(a(λ rs. s))))))))
 
 Beta Reducution
-	(λ g(λ z y . y (a (a (λ z y . y))) 
-	((λ z y . y (a (a (λ f x . x))) 
-	(a (a (a (λ z y . y))) 
+	(λ g(λ z y . y (a (a (λ z y . y)))
+	((λ z y . y (a (a (λ f x . x)))
+	(a (a (a (λ z y . y)))
 	(λ z x . z(a(a(λzj.j)))))
 	(a(a(a(λ rs. s))))))))
 
 Beta Reduce g to (λ z x . z(a(a(λzj.j)))(a(a(a(λ rs. s)))))
-	(λ z y . y (a (a (λ z y . y))) 
-	((λ z y . y (a (a (λ f x . x))) 
+	(λ z y . y (a (a (λ z y . y)))
+	((λ z y . y (a (a (λ f x . x)))
 	(a (a (a (λ z y . y)))))))
 
 Beta Reduction
 	(λ z y . y
-	((λ z y . y (a (a (λ f x . x))) 
+	((λ z y . y (a (a (λ f x . x)))
 	(a (a (a (λ z y . y)))))))
 
 Beta Reduction

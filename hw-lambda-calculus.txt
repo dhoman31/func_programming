@@ -65,113 +65,82 @@ iv)	null? null ↝ true
 
 	(λ c . (λ a . (λ d . (λ h . (h (d (a (a (λ z y . y))) (d (a (a (λ f x . x))) (a (a (a (λ z x . x)))))) (h (a (a (λ z y . y))) (a (a (a (λ z x . x))))))) (λ n m . n (d m) (λ z y . y))) (λ n m . n a m)) (λ n z . c (n z) z)) (λ z g x . z (g x))
 
-# cleaner representation
-
 	(λ c .
-	(λ a .
-	(λ d .
-	(λ h .
-	(h (d (a (a (λ z y . y)))
-	(d (a (a (λ f x . x)))
-	(a (a (a (λ z x . x))))))
-	(h (a (a (λ z y . y)))
-	(a (a (a (λ z x . x)))))))
-	(λ n m . n (d m) (λ z y . y)))
-	(λ n m . n a m))
-	(λ n z . c (n z) z))
+	  (λ a .
+	    (λ d .
+	      (λ h . (h (d (a (a (λ z y . y)))
+	                    (d (a (a (λ f x . x)))
+	                        (a (a (a (λ z x . x))))))
+	                (h (a (a (λ z y . y)))
+	                    (a (a (a (λ z x . x)))))))
+	      (λ n m . n (d m) (λ z y . y)))
+	    (λ n m . n a m))
+	  (λ n z . c (n z) z))
 	(λ z g x . z (g x))
 
-Solutions
-	(λ n m . n (d m) (λ z y . y)))  = (λ n. n (λ z y . y)) = (λ z y . y)
-	(λ n m . n a m)) = (λ n . n a) = a
-	(λ n z . c (n z) z))  = c
-	(λ z g x . z (g x)) = (λ z g. z)
-
-Using above reduces to
+	# renaming for false values
 	(λ c .
+	  (λ a .
+	    (λ d .
+	      (λ h . (h (d (a (a ((FALSE))))
+	                    (d (a (a ((FALSE))))
+	                        (a (a (a ((FALSE)))))))
+	                (h (a (a ((FALSE))))
+	                    (a (a (a ((FALSE))))))))
+	      (λ n m . n (d m) ((FALSE))))
+	    (λ n m . n a m))
+	  (λ n z . c (n z) z))
+	(λ k g x . k (g x))
+
+	# substitute (λ n z . c (n z) z) for lambda c - can't substitute c
 	(λ a .
-	(λ d .
-	(λ h .
-	(h (d (a (a (λ z y . y)))
-	(d (a (a (λ f x . x)))
-	(a (a (a (λ z x . x))))))
-	(h (a (a (λ z y . y)))
-	(a (a (a (λ z x . x)))))))
-	(λ z y . y))
-	 a)
-	 c)
-	(λ z g. z)
+	  (λ d .
+	    (λ h . (h (d (a (a (FALSE)))
+	                  (d (a (a (FALSE)))
+	                      (a (a (a (FALSE))))))
+	              (h (a (a (FALSE)))
+	                  (a (a (a (FALSE)))))))
+	    (λ n m . n (d m) (FALSE)))
+	  (λ n m . n a m))
+	(λ k g x . k (g x))
 
-C is an unbound variable so it can be reduced to:
+	# rename the values for true
 	(λ a .
+	  (λ d .
+	    (λ h . (h (d (a (a (FALSE)))
+	                  (d (a (a (FALSE)))
+	                      (a (a (a (FALSE))))))
+	              (h (a (a (FALSE)))
+	                  (a (a (a (FALSE)))))))
+	    (TRUE (d m) (FALSE)))
+	  (TRUE a m))
+	(λ k g x . k (g x))
+
+	# substitute for a with (TRUE a m) (reduction)
 	(λ d .
-	(λ h .
-	(h (d (a (a (λ z y . y)))
-	(d (a (a (λ f x . x)))
-	(a (a (a (λ z x . x))))))
-	(h (a (a (λ z y . y)))
-	(a (a (a (λ z x . x)))))))
-	(λ z y . y))
-	 a)
-	(λ z g. z)
+	  (λ h . (h (d ((TRUE a m)  ((TRUE a m)  (FALSE)))
+	                (d ((TRUE a m)  ((TRUE a m)  (FALSE)))
+	                    ((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE))))))
+	            (h ((TRUE a m)  ((TRUE a m)  (FALSE)))
+	                ((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE)))))))
+	  (TRUE (d m) (FALSE)))
+	(λ k g x . k (g x))
 
+	# substitute (TRUE (d m) (FALSE)) for lambda d (reduction)
+	(λ h . (h ((TRUE (d m) (FALSE)) ((TRUE a m)  ((TRUE a m)  (FALSE)))
+	              ((TRUE (d m) (FALSE)) ((TRUE a m)  ((TRUE a m)  (FALSE)))
+	                  ((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE))))))
+	          (h ((TRUE a m)  ((TRUE a m)  (FALSE)))
+	              ((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE)))))))
 
-Reduce d to (λ z y . y)
-	(λ h .
-	(h (λ z y . y (a (a (λ z y . y)))
-	(λ z y . y(a (a (λ f x . x)))
-	(a (a (a (λ z x . x))))))
-	(h (a (a (λ z y . y)))
-	(a (a (a (λ z x . x)))))))
-	(λ z g. z)
+	# substitute (λ k g x . k (g x)) for h
+	((λ k g x . k (g x)) ((TRUE (d m) (FALSE)) ((TRUE a m)  ((TRUE a m)  (FALSE)))((TRUE (d m) (FALSE)) ((TRUE a m)  ((TRUE a m)  (FALSE)))((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE))))))((λ k g x . k (g x)) ((TRUE a m)  ((TRUE a m)  (FALSE)))((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE))))))
 
+	# substitute (g x) for lambda k (reduction)
+	(λ g x . (g x)) ((TRUE (d m) (FALSE)) ((TRUE a m)  ((TRUE a m)  (FALSE)))((TRUE (d m) (FALSE)) ((TRUE a m)  ((TRUE a m)  (FALSE)))((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE))))))((λ k g x . k (g x)) ((TRUE a m)  ((TRUE a m)  (FALSE)))((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE))))))
 
-Alpha renaming
-	(λ h .
-	(h (λ z y . y (a (a (λ z y . y)))
-	((λ z y . y (a (a (λ f x . x)))
-	((λ z x . x))(a (a(λ f x . x))))
-	(a (a (a (λ z y . y)))
-	(h (a (a (λ z x . x))))))
-	(a(a(a(λ zj. j)))))))
-	(λ kg.k)
+	# substitute ((TRUE (d m) (FALSE)) ((TRUE a m)  ((TRUE a m)  (FALSE)))((TRUE (d m) (FALSE)) ((TRUE a m)  ((TRUE a m)  (FALSE)))((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE)))))) for lambda g (reduction)
+	(λ x . (g x))((λ k g x . k (g x)) ((TRUE a m)  ((TRUE a m)  (FALSE)))((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE)))))
 
-Beta Reduce h to λ k g.k
-	(λ k g.k (λ z y . y (a (a (λ z y . y)))
-	((λ z y . y (a (a (λ f x . x)))
-	(a (a (a (λ z y . y)))
-	(λ kg.k (a (a (λ z x . x))))))
-	(a(a(a(λ zj. j)))))))
-
-Alpha Renaming
-	(λ k g.k (λ z y . y (a (a (λ z y . y)))
-	((λ z y . y (a (a (λ f x . x)))
-	(a (a (a (λ z y . y)))
-	(λ z x . z(a(a(λzj.j)))))
-	(a(a(a(λ rs. s))))))))
-
-Beta Reducution
-	(λ g(λ z y . y (a (a (λ z y . y)))
-	((λ z y . y (a (a (λ f x . x)))
-	(a (a (a (λ z y . y)))
-	(λ z x . z(a(a(λzj.j)))))
-	(a(a(a(λ rs. s))))))))
-
-Beta Reduce g to (λ z x . z(a(a(λzj.j)))(a(a(a(λ rs. s)))))
-	(λ z y . y (a (a (λ z y . y)))
-	((λ z y . y (a (a (λ f x . x)))
-	(a (a (a (λ z y . y)))))))
-
-Beta Reduction
-	(λ z y . y
-	((λ z y . y (a (a (λ f x . x)))
-	(a (a (a (λ z y . y)))))))
-
-Beta Reduction
-	(λ z y . y (a (a (λ f x . x)))(a (a (a (λ z y . y)))))))
-
-Beta Reduction
-	(λ y . y(a (a (a (λ z y . y)))))
-
-Beta Reduction to Normal form
-	(a (a (a (λ z y . y))))
+	# substitute ((λ k g x . k (g x)) ((TRUE a m)  ((TRUE a m)  (FALSE)))((TRUE a m)  ((TRUE a m)  ((TRUE a m)  (FALSE))))) for lambda x (reduction)
+	(g x)

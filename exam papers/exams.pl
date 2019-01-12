@@ -16,3 +16,15 @@ split(List1, C, List2, List3) :-
   append(X, List3, Y),
   write(Y),
   List1 = Y.
+
+% Autumn 2017
+check(C,[],N,V) :- V is N.
+
+check(C, [H|T], N, V) :-
+  (C = H -> 
+  N1 is N+1,
+  check(C, T, N1, V),
+  V=:=3 ) ; check(C,T,N,V).
+
+thrice(C, List) :-
+  check(C, List, 0, V).

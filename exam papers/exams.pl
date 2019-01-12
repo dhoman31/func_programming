@@ -6,3 +6,6 @@ mul(List1, List2, List3) :-
   X*Y =:= Z.
 
 % August2018
+scissors(List1, C, List2, List3) :-
+  append(List2, [C|List3], List),
+  List = List1.

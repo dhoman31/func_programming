@@ -32,3 +32,26 @@ thrice(C, List) :-
 %% August 2016 and Autumn 2015
 noah([],[],[]).
 noah([X|Xs], [Y|Ys], [X|[Y|Zs]]) :- noah(Xs, Ys, Zs).
+
+%% January 2015
+%% only true if side-by-side
+%% needs to be a memeber of the list: either at the end, in the middle or at the beginning
+member(Y, [Y|[]]).
+member(Y, [Y|_]).
+member(Y, [_,Xs]) :- member(Y, Xs).
+
+%% needs to be a member and needs to occur twice
+doublemember(Y,[Y|Xs]) :- member(Y, Xs).
+doublemember(Y,[_|Xs]) :- doublemember(Y,Xs).
+
+%% tries to use a counter
+doubleCheck(X, [], N, V) :- V is N.
+
+doubleCheck(X, [H|T], N, V) :-
+  (X = H ->
+  N1 is N+1,
+  doubleCheck(X, T, N1, V),
+  V =:= 2) ; doubleCheck(X,T,N,V).
+
+twice(X, Lst) :-
+  doubleCheck(X, Lst, 0, V).

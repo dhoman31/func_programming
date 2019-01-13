@@ -51,3 +51,20 @@
        (cons(map car ls)(tr (map cdr ls)))))))
 
 ; January 2016
+(define reverse-with-count
+  (λ (l1 l2)
+    (cond
+      ((null? l1)'())
+      (else
+       (append (make-list (car (reverse l2))(car (reverse l1))) (reverse-with-count (reverse (cdr (reverse l1))) (reverse (cdr (reverse l2)))))))))
+
+; August 2015 is the same as January 2016
+
+; January 2015
+(define after-filter
+  (λ (p l)
+    (cond
+      ((or(null? l)(null? (cdr l)))'())
+      ((p (car l)) (cons (cadr l)(after-filter p (cdr l))))
+      (else
+       (after-filter p (cdr l))))))

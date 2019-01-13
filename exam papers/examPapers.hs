@@ -30,3 +30,16 @@ weaveHunks x lst1 lst2
     | (length lst1) == 0 = lst2
     | (length lst2) == 0 = lst1
     | otherwise = take x lst1 ++ take x lst2 ++ weaveHunks x (drop x lst1) (drop x lst2)
+
+-- Autumn 2016
+tr :: [[a]] -> [[a]]
+tr lst
+    | (null (head lst)) = []
+    | otherwise = [map head lst] ++ tr(map tail lst)
+
+-- Janaury 2016
+-- can't get into a list
+revCount :: [a] -> [Int] -> [a]
+revCount lst1 lst2
+    | ((null lst1) || (null lst2)) = [] 
+    | otherwise = revCount (tail lst1) (tail lst2) ++ replicate (head lst2) (head lst1)

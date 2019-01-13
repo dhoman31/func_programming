@@ -43,3 +43,16 @@ revCount :: [a] -> [Int] -> [a]
 revCount lst1 lst2
     | ((null lst1) || (null lst2)) = [] 
     | otherwise = revCount (tail lst1) (tail lst2) ++ replicate (head lst2) (head lst1)
+
+-- Autumn 2015
+revCount2 :: [a] -> [Int] -> [a]
+revCount2 lst1 lst2
+    | ((null lst1) || (null lst2)) = [] 
+    | otherwise = revCount2 (tail lst1) (tail lst2) ++ replicate (head lst2) (head lst1)
+
+-- January 2015
+afterFilter :: (a -> Bool) -> [a] -> [a]
+afterFilter func lst
+    | (length lst) == 0 || (length (tail lst))== 0 = []
+    | (func (head lst)) = [head (tail lst)] ++ afterFilter func (tail lst)
+    | otherwise = afterFilter func (tail lst)

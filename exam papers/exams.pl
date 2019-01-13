@@ -28,3 +28,7 @@ check(C, [H|T], N, V) :-
 
 thrice(C, List) :-
   check(C, List, 0, V).
+
+%% August 2016 and Autumn 2015
+noah([],[],[]).
+noah([X|Xs], [Y|Ys], [X|[Y|Zs]]) :- noah(Xs, Ys, Zs).
